@@ -1,0 +1,29 @@
+accessWidener v2 named
+
+accessible method net/minecraft/WorldType <init> (ILjava/lang/String;)V
+
+accessible field net/minecraft/BiomeGenBase enableRain Z
+
+accessible field net/minecraft/WorldChunkManager genBiomes Lnet/minecraft/GenLayer;
+accessible field net/minecraft/WorldChunkManager biomeIndexLayer Lnet/minecraft/GenLayer;
+
+accessible field net/minecraft/BiomeDecorator treesPerChunk I
+accessible field net/minecraft/BiomeDecorator deadBushPerChunk I
+accessible field net/minecraft/BiomeDecorator reedsPerChunk I
+accessible field net/minecraft/BiomeDecorator cactiPerChunk I
+accessible field net/minecraft/BiomeDecorator flowersPerChunk I
+accessible field net/minecraft/BiomeDecorator grassPerChunk I
+accessible field net/minecraft/BiomeDecorator surface_mushrooms_per_chunk I
+accessible field net/minecraft/BiomeDecorator bigMushroomsPerChunk I
+accessible field net/minecraft/BiomeDecorator waterlilyPerChunk I
+accessible field net/minecraft/BiomeDecorator clayPerChunk I
+accessible field net/minecraft/BiomeDecorator sandPerChunk I
+accessible field net/minecraft/BiomeDecorator sandPerChunk2 I
+
+extendable class net/minecraft/ChunkProviderGenerate
+accessible field net/minecraft/ChunkProviderGenerate stoneNoise [D
+accessible field net/minecraft/ChunkProviderGenerate rand Ljava/util/Random;
+accessible field net/minecraft/ChunkProviderGenerate noiseGen1 Lnet/minecraft/NoiseGeneratorOctaves;
+accessible field net/minecraft/ChunkProviderGenerate noiseGen2 Lnet/minecraft/NoiseGeneratorOctaves;
+accessible field net/minecraft/ChunkProviderGenerate noiseGen3 Lnet/minecraft/NoiseGeneratorOctaves;
+accessible field net/minecraft/ChunkProviderGenerate biomesForGeneration [Lnet/minecraft/BiomeGenBase;

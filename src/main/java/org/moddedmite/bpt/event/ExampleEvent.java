@@ -1,6 +1,6 @@
-package com.example.event;
+package org.moddedmite.bpt.event;
 
-import com.example.ExampleMod;
+import org.moddedmite.bpt.BackportTerrain;
 import com.google.common.eventbus.Subscribe;
 import moddedmite.rustedironcore.api.event.Handlers;
 import moddedmite.rustedironcore.api.event.listener.IInitializationListener;
@@ -23,7 +23,7 @@ public class ExampleEvent extends Handlers {
         Handlers.Initialization.register(new IInitializationListener() {
             @Override
             public void onClientStarted(Minecraft client) {
-                ExampleMod.LOGGER.info("Hello events!");
+                BackportTerrain.LOGGER.info("Hello events!");
             }
         });
     }

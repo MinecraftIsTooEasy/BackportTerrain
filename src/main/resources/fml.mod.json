@@ -3,27 +3,24 @@
   "id": "${id}",
   "version": "${version}",
   "name": "${name}",
-  "description": "This is an example description! Tell everyone what your mod is about!",
+  "description": "Backport 1.7+ World Gen To MITE!",
   "authors": [
-    "Me!"
+    "Xy_Luce"
   ],
   "contact": {
     "homepage": "https://minecraftistooeasy.github.io/",
-    "sources": "https://github.com/MinecraftIsTooEasy/fish-example-mod"
+    "sources": "https://github.com/MinecraftIsTooEasy/BackportTerrain"
   },
-  "license": "CC0-1.0",
-  "icon": "assets/modid/icon.png",
+  "license": "MIT",
+  "icon": "assets/bpt/icon.png",
   "environment": "*",
   "entrypoints": {
     "main": [
-      "com.example.ExampleMod"
-    ],
-    "registry": [
-      "com.example.register.ExampleRegistryInit"
+      "org.moddedmite.bpt.BackportTerrain"
     ]
   },
   "mixins": [
-    "modid.mixins.json"
+    "bpt.mixins.json"
   ],
   "depends": {
     "fishmodloader": ">=3.4.0",
@@ -34,5 +31,5 @@
   "suggests": {
     "another-mod": "*"
   },
-  "accessWidener": "modid.accesswidener"
+  "accessWidener": "bpt.accesswidener"
 }
