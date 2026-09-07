@@ -1,5 +1,6 @@
 package org.moddedmite.bpt.world.gen.layer;
 
+import org.moddedmite.bpt.BackportTerrain;
 import org.moddedmite.bpt.world.biome.BBiomes;
 import net.minecraft.GenLayer;
 import net.minecraft.WorldType;
@@ -32,7 +33,7 @@ public abstract class BGenLayer extends GenLayer {
         GenLayer biomeLayer = BGenLayerZoom.magnify(1000L, deepOcean, 0);
         byte biomeSize = 4;
         
-        if (worldType == WorldType.LARGE_BIOMES) {
+        if (worldType == WorldType.LARGE_BIOMES || BackportTerrain.isBackportLargeBiomes(worldType)) {
             biomeSize = 6;
         }
         

@@ -21,14 +21,14 @@ public class WorldProviderMixin {
     
     @Inject(method = "createChunkGenerator", at = @At("HEAD"), cancellable = true)
     private void createChunkGenerator(CallbackInfoReturnable<IChunkProvider> cir) {
-        if (this.worldObj.getWorldInfo().getTerrainType() == BackportTerrain.BACKPORT_DEFAULT) {
+        if (BackportTerrain.isBackportWorldType(this.worldObj.getWorldInfo().getTerrainType())) {
             cir.setReturnValue(new BChunkProviderGenerate(this.worldObj, this.worldObj.getSeed(), this.worldObj.getWorldInfo().isMapFeaturesEnabled()));
         }
     }
     
     @Inject(method = "registerWorldChunkManager", at = @At("TAIL"))
     private void registerWorldChunkManager(CallbackInfo ci) {
-        if (this.worldObj.getWorldInfo().getTerrainType() == BackportTerrain.BACKPORT_DEFAULT) {
+        if (BackportTerrain.isBackportWorldType(this.worldObj.getWorldInfo().getTerrainType())) {
             this.worldChunkMgr = new BWorldChunkManager(this.worldObj);
         }
     }

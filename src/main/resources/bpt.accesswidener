@@ -19,6 +19,11 @@ accessible field net/minecraft/BiomeDecorator waterlilyPerChunk I
 accessible field net/minecraft/BiomeDecorator clayPerChunk I
 accessible field net/minecraft/BiomeDecorator sandPerChunk I
 accessible field net/minecraft/BiomeDecorator sandPerChunk2 I
+accessible field net/minecraft/BiomeGenBase enableSnow Z
+accessible field net/minecraft/BiomeGenBase spawnableCreatureList Ljava/util/List;
+accessible field net/minecraft/BiomeGenBase spawnableMonsterList Ljava/util/List;
+accessible field net/minecraft/BiomeGenBase spawnableCaveCreatureList Ljava/util/List;
+accessible field net/minecraft/BiomeGenBase spawnableWaterCreatureList Ljava/util/List;
 
 extendable class net/minecraft/ChunkProviderGenerate
 accessible field net/minecraft/ChunkProviderGenerate stoneNoise [D
@@ -27,3 +32,10 @@ accessible field net/minecraft/ChunkProviderGenerate noiseGen1 Lnet/minecraft/No
 accessible field net/minecraft/ChunkProviderGenerate noiseGen2 Lnet/minecraft/NoiseGeneratorOctaves;
 accessible field net/minecraft/ChunkProviderGenerate noiseGen3 Lnet/minecraft/NoiseGeneratorOctaves;
 accessible field net/minecraft/ChunkProviderGenerate biomesForGeneration [Lnet/minecraft/BiomeGenBase;
+accessible field net/minecraft/ChunkProviderGenerate mapFeaturesEnabled Z
+
+accessible field net/minecraft/NBTTagCompound tagMap Ljava/util/Map;
+
+mutable field net/minecraft/MapGenVillage villageSpawnBiomes Ljava/util/List;
+
+accessible method net/minecraft/MapGenStructureIO func_143034_b (Ljava/lang/Class;Ljava/lang/String;)V

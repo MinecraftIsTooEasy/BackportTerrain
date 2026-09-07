@@ -5,4 +5,8 @@ public class BiomeOcean extends BBiomes.BBiome {
         super(id);
         this.spawnableCreatureList.clear();
     }
+
+    public BBiomes.TempCategory getTempCategory() {
+        return BBiomes.TempCategory.OCEAN;
+    }
 }

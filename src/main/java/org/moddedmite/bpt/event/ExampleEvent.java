@@ -1,30 +1,19 @@
 package org.moddedmite.bpt.event;
 
-import org.moddedmite.bpt.BackportTerrain;
-import com.google.common.eventbus.Subscribe;
+import com.google.common.collect.Lists;
 import moddedmite.rustedironcore.api.event.Handlers;
-import moddedmite.rustedironcore.api.event.listener.IInitializationListener;
-import net.minecraft.Minecraft;
-import net.xiaoyu233.fml.reload.event.MITEEvents;
-import net.xiaoyu233.fml.reload.event.SoundsRegisterEvent;
+import net.minecraft.MapGenVillage;
+import org.moddedmite.bpt.world.biome.BBiomes;
 
-// register fish & RIC events
+import java.util.ArrayList;
+
 public class ExampleEvent extends Handlers {
-    // Reference net.xiaoyu233.fml.reload.event for fish events
-    // Notice: Please try to avoid using Fish Event, as Fish Event will be removed in FishModLoader v4.
-    @Subscribe
-    public void onSoundsRegister(SoundsRegisterEvent event) {
-    }
 
-    // Reference moddedmite.rustedironcore.api.event.Handlers for RIC events
     public static void register() {
-        MITEEvents.MITE_EVENT_BUS.register(new ExampleEvent());
-
-        Handlers.Initialization.register(new IInitializationListener() {
-            @Override
-            public void onClientStarted(Minecraft client) {
-                BackportTerrain.LOGGER.info("Hello events!");
-            }
-        });
+        ArrayList biomes = Lists.newArrayList(MapGenVillage.villageSpawnBiomes);
+        biomes.add(BBiomes.plains);
+        biomes.add(BBiomes.desert);
+        biomes.add(BBiomes.savanna);
+        MapGenVillage.villageSpawnBiomes = biomes;
     }
 }

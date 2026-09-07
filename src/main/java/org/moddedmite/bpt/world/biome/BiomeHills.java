@@ -1,18 +1,17 @@
 package org.moddedmite.bpt.world.biome;
 
-import net.minecraft.BiomeGenBase;
 import net.minecraft.Block;
 import net.minecraft.World;
 import net.minecraft.WorldGenMinable;
-import net.minecraft.WorldGenTaiga2;
 import net.minecraft.WorldGenerator;
 import org.moddedmite.bpt.api.IBiome;
+import org.moddedmite.bpt.world.gen.feature.BWorldGenTaiga2;
 
 import java.util.Random;
 
 public class BiomeHills extends BBiomes.BBiome implements IBiome {
     private final WorldGenMinable silverfishGenerator;
-    private final WorldGenTaiga2 spruceGenerator;
+    private final BWorldGenTaiga2 spruceGenerator;
     private int field_150635_aE;
     private int field_150636_aF;
     private int field_150637_aG;
@@ -21,7 +20,7 @@ public class BiomeHills extends BBiomes.BBiome implements IBiome {
     public BiomeHills(int id, boolean extraTrees) {
         super(id);
         this.silverfishGenerator = new WorldGenMinable(Block.silverfish.blockID, 8);
-        this.spruceGenerator = new WorldGenTaiga2(false);
+        this.spruceGenerator = new BWorldGenTaiga2(false);
         this.field_150635_aE = 0;
         this.field_150636_aF = 1;
         this.field_150637_aG = 2;
@@ -71,16 +70,16 @@ public class BiomeHills extends BBiomes.BBiome implements IBiome {
         this.genBiomeTerrain(p_150573_1_, p_150573_2_, p_150573_3_, p_150573_4_, p_150573_5_, p_150573_6_, p_150573_7_);
     }
 
-//    public BiomeHills mutateHills(BBiomes.BBiome p_150633_1_) {
-//        this.field_150638_aH = this.field_150637_aG;
-//        this.func_150557_a(p_150633_1_.color, true);
-//        this.setBiomeName(p_150633_1_.biomeName + " M");
-//        this.setHeight(new BBiomes.Height(p_150633_1_.rootHeight, p_150633_1_.heightVariation));
-//        this.setTemperatureRainfall(p_150633_1_.temperature, p_150633_1_.rainfall);
-//        return this;
-//    }
-//
-//    public BiomeGenBase createMutation() {
-//        return (new BiomeHills(this.biomeID + 128, false)).mutateHills(this);
-//    }
+    public BiomeHills mutateHills(BBiomes.BBiome base) {
+        this.field_150638_aH = this.field_150637_aG;
+        this.setColor(base.color, true);
+        this.name(base.biomeName + " M");
+        this.height(new BBiomes.Height(base.minHeight, base.maxHeight));
+        this.tempRain(base.temperature, base.rainfall);
+        return this;
+    }
+
+    public BBiomes.BBiome createMutation() {
+        return new BiomeHills(this.biomeID + 128, false).mutateHills(this);
+    }
 }

@@ -2,12 +2,12 @@ package org.moddedmite.bpt.world.gen;
 
 import net.minecraft.NoiseGenerator;
 
+import java.util.Arrays;
 import java.util.Random;
 
 public class NoiseGeneratorPerlin extends NoiseGenerator {
 	private NoiseGeneratorSimplex[] field_151603_a;
 	private int field_151602_b;
-	private static final String __OBFID = "CL_00000536";
 	
 	public NoiseGeneratorPerlin(Random p_i45470_1_, int p_i45470_2_) {
 		this.field_151602_b = p_i45470_2_;
@@ -36,9 +36,7 @@ public class NoiseGeneratorPerlin extends NoiseGenerator {
 	
 	public double[] func_151600_a(double[] p_151600_1_, double p_151600_2_, double p_151600_4_, int p_151600_6_, int p_151600_7_, double p_151600_8_, double p_151600_10_, double p_151600_12_, double p_151600_14_) {
 		if (p_151600_1_ != null && p_151600_1_.length >= p_151600_6_ * p_151600_7_) {
-			for (int k = 0; k < p_151600_1_.length; ++k) {
-				p_151600_1_[k] = 0.0D;
-			}
+			Arrays.fill(p_151600_1_, 0.0D);
 		} else {
 			p_151600_1_ = new double[p_151600_6_ * p_151600_7_];
 		}
