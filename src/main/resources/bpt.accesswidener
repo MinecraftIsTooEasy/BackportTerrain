@@ -24,6 +24,7 @@ accessible field net/minecraft/BiomeGenBase spawnableCreatureList Ljava/util/Lis
 accessible field net/minecraft/BiomeGenBase spawnableMonsterList Ljava/util/List;
 accessible field net/minecraft/BiomeGenBase spawnableCaveCreatureList Ljava/util/List;
 accessible field net/minecraft/BiomeGenBase spawnableWaterCreatureList Ljava/util/List;
+accessible field net/minecraft/WeightedRandomItem itemWeight I
 
 extendable class net/minecraft/ChunkProviderGenerate
 accessible field net/minecraft/ChunkProviderGenerate stoneNoise [D

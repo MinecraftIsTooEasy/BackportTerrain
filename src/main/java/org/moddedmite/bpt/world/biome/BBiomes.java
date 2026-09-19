@@ -30,6 +30,7 @@ public class BBiomes {
     protected static final Height height_PartiallySubmerged = new Height(-0.2F, 0.1F);
 
     public static final NoiseGeneratorPerlin plantNoise = new NoiseGeneratorPerlin(new Random(2345L), 1);
+    public static final NoiseGeneratorPerlin temperatureNoise = new NoiseGeneratorPerlin(new Random(1234L), 1);
 
     public static final BBiome ocean = (new BiomeOcean(IdUtil.getNextBiomeId())).color(112).name("Ocean").height(height_Oceans);
     public static final BBiome plains = (new BiomePlains(IdUtil.getNextBiomeId())).color(9286496).name("Plains");
@@ -197,7 +198,16 @@ public class BBiomes {
         public TempCategory getTempCategory() {
             return (double) this.temperature < 0.2D ? TempCategory.COLD : ((double) this.temperature < 1.0D ? TempCategory.MEDIUM : TempCategory.WARM);
         }
-        
+
+        public final float getFloatTemperature(int x, int y, int z) {
+            if (y > 64) {
+                float f = (float) temperatureNoise.func_151601_a(x / 8.0D, z / 8.0D) * 4.0F;
+                return this.temperature - (f + (float) y - 64.0F) * 0.05F / 30.0F;
+            } else {
+                return this.temperature;
+            }
+        }
+
         public void genTerrainBlocks(World p_150573_1_, Random p_150573_2_, Block[] p_150573_3_, byte[] p_150573_4_, int p_150573_5_, int p_150573_6_, double p_150573_7_) {
             this.genBiomeTerrain(p_150573_1_, p_150573_2_, p_150573_3_, p_150573_4_, p_150573_5_, p_150573_6_, p_150573_7_);
         }
@@ -235,7 +245,7 @@ public class BBiomes {
                                 }
                                 
                                 if (l1 < 63 && (block == null || block.blockMaterial == Material.air)) {
-                                    if (this.getFloatTemperature(/*p_150560_5_, l1, p_150560_6_*/) < 0.15F) {
+                                    if (this.getFloatTemperature(p_150560_5_, l1, p_150560_6_) < 0.15F) {
                                         block = Block.ice;
                                         b0 = 0;
                                     } else {

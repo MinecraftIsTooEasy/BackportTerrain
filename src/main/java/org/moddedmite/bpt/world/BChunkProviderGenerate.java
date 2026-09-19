@@ -9,20 +9,28 @@ import net.minecraft.EnumCreatureType;
 import net.minecraft.ExtendedBlockStorage;
 import net.minecraft.IChunkProvider;
 import net.minecraft.MathHelper;
+import net.minecraft.Material;
 import net.minecraft.SpawnerAnimals;
 import net.minecraft.World;
 import net.minecraft.WorldGenDungeons;
 import net.minecraft.WorldGenLakes;
+import moddedmite.rustedironcore.api.world.Dimension;
+import net.minecraft.WorldType;
+import org.moddedmite.bpt.BackportTerrain;
 import org.moddedmite.bpt.api.IBiome;
+import org.moddedmite.bpt.api.event.BPTHandler;
 import org.moddedmite.bpt.world.biome.BBiomes;
 import org.moddedmite.bpt.world.gen.MapGenBase;
 import org.moddedmite.bpt.world.gen.MapGenCaves;
 import org.moddedmite.bpt.world.gen.MapGenRavine;
 import org.moddedmite.bpt.world.gen.NoiseGeneratorPerlin;
+import org.moddedmite.bpt.world.gen.RICMapGenBridge;
 import org.moddedmite.bpt.world.gen.structure.MapGenMineshaft;
 import org.moddedmite.bpt.world.gen.structure.MapGenScatteredFeature;
 import org.moddedmite.bpt.world.gen.structure.MapGenStronghold;
 import org.moddedmite.bpt.world.gen.structure.MapGenVillage;
+
+import java.util.Random;
 
 public class BChunkProviderGenerate extends ChunkProviderGenerate {
 	private NoiseGeneratorPerlin stoneNoisePerlin;
@@ -39,11 +47,13 @@ public class BChunkProviderGenerate extends ChunkProviderGenerate {
 	private MapGenVillage villageGenerator = new MapGenVillage();
 	private MapGenMineshaft mineshaftGenerator = new MapGenMineshaft();
 	private MapGenScatteredFeature scatteredFeatureGenerator = new MapGenScatteredFeature();
+	private final WorldType terrainType;
 
 	public BChunkProviderGenerate(World world, long seed, boolean mapFeaturesEnabled) {
 		super(world, seed, mapFeaturesEnabled);
 		this.world = world;
 		this.stoneNoisePerlin = new NoiseGeneratorPerlin(this.rand, 4);
+		this.terrainType = world.getWorldInfo().getTerrainType();
 
 		for (int j = -2; j <= 2; ++j) {
 			for (int k = -2; k <= 2; ++k) {
@@ -139,6 +149,12 @@ public class BChunkProviderGenerate extends ChunkProviderGenerate {
 						BiomeGenBase biome1 = this.biomesForGeneration[j1 + l1 + 2 + (k1 + i2 + 2) * 10];
 						float rootHeight = biome1.minHeight;
 						float heightVariation = biome1.maxHeight;
+						
+						if (this.terrainType == BackportTerrain.AMPLIFIED && rootHeight > 0.0F) {
+							rootHeight = 1.0F + rootHeight * 2.0F;
+							heightVariation = 1.0F + heightVariation * 4.0F;
+						}
+
 						float f5 = this.parabolicField[l1 + 2 + (i2 + 2) * 5] / (rootHeight + 2.0F);
 
 						if (biome1.minHeight > biome.minHeight) {
@@ -218,7 +234,73 @@ public class BChunkProviderGenerate extends ChunkProviderGenerate {
 		for (int k = 0; k < 16; ++k) {
 			for (int l = 0; l < 16; ++l) {
 				BiomeGenBase biome = biomes[l + k * 16];
-				((IBiome) biome).genTerrainBlocks(this.world, this.rand, blocks, metadata, chunkX * 16 + k, chunkZ * 16 + l, this.stoneNoise[l + k * 16]);
+
+				if (biome instanceof IBiome) {
+					((IBiome) biome).genTerrainBlocks(this.world, this.rand, blocks, metadata, chunkX * 16 + k, chunkZ * 16 + l, this.stoneNoise[l + k * 16]);
+				} else {
+					generateDefaultTerrain(biome, this.rand, blocks, chunkX * 16 + k, chunkZ * 16 + l, this.stoneNoise[l + k * 16]);
+				}
+			}
+		}
+	}
+
+	private static void generateDefaultTerrain(BiomeGenBase biome, Random rand, Block[] blocks, int worldX, int worldZ, double stoneNoise) {
+		Block top = Block.getBlock(biome.topBlock & 255);
+		Block filler = Block.getBlock(biome.fillerBlock & 255);
+		float temperature = biome.getFloatTemperature();
+		int i1 = worldX & 15;
+		int j1 = worldZ & 15;
+		int k1 = blocks.length / 256;
+		Block block = top;
+		Block block1 = filler;
+		int k = -1;
+		int l = (int) (stoneNoise / 3.0D + 3.0D + rand.nextDouble() * 0.25D);
+
+		for (int y = 255; y >= 0; --y) {
+			int index = (j1 * 16 + i1) * k1 + y;
+
+			if (y <= rand.nextInt(5)) {
+				blocks[index] = Block.bedrock;
+			} else {
+				Block block2 = blocks[index];
+
+				if (block2 == null || block2.blockMaterial == Material.air) {
+					k = -1;
+				} else if (block2 == Block.stone) {
+					if (k == -1) {
+						if (l <= 0) {
+							block = null;
+							block1 = Block.stone;
+						} else if (y >= 59 && y <= 64) {
+							block = top;
+							block1 = filler;
+						}
+
+						if (y < 63 && (block == null || block.blockMaterial == Material.air)) {
+							block = temperature < 0.15F ? Block.ice : Block.waterStill;
+						}
+
+						k = l;
+
+						if (y >= 62) {
+							blocks[index] = block;
+						} else if (y < 56 - l) {
+							block = null;
+							block1 = Block.stone;
+							blocks[index] = Block.gravel;
+						} else {
+							blocks[index] = block1;
+						}
+					} else if (k > 0) {
+						--k;
+						blocks[index] = block1;
+
+						if (k == 0 && block1 == Block.sand) {
+							k = rand.nextInt(4) + Math.max(0, y - 63);
+							block1 = Block.sandStone;
+						}
+					}
+				}
 			}
 		}
 	}
@@ -239,13 +321,17 @@ public class BChunkProviderGenerate extends ChunkProviderGenerate {
 		this.replaceBlocksForBiome(chunkX, chunkZ, blocks, metadata, this.biomesForGeneration);
 		
 		this.caveGenerator.generate(this, this.world, chunkX, chunkZ, blocks);
-		 this.ravineGenerator.generate(this, this.world, chunkX, chunkZ, blocks);
-		
+		this.ravineGenerator.generate(this, this.world, chunkX, chunkZ, blocks);
+		BPTHandler.MapGen.onChunkProvideMapGen(Dimension.fromWorld(this.world), this, this.world, chunkX, chunkZ, blocks);
+		RICMapGenBridge.onChunkProvideMapGen(Dimension.fromWorld(this.world), this, this.world, chunkX, chunkZ, blocks);
+
 		if (this.mapFeaturesEnabled) {
 			this.mineshaftGenerator.generate(this, this.world, chunkX, chunkZ, blocks);
 			this.villageGenerator.generate(this, this.world, chunkX, chunkZ, blocks);
 			this.strongholdGenerator.generate(this, this.world, chunkX, chunkZ, blocks);
 			this.scatteredFeatureGenerator.generate(this, this.world, chunkX, chunkZ, blocks);
+			BPTHandler.MapGen.onChunkProvideStructures(Dimension.fromWorld(this.world), this, this.world, chunkX, chunkZ, blocks);
+			RICMapGenBridge.onChunkProvideStructures(Dimension.fromWorld(this.world), this, this.world, chunkX, chunkZ, blocks);
 		}
 		Chunk chunk = new Chunk(this.world, chunkX, chunkZ);
 
@@ -303,6 +389,8 @@ public class BChunkProviderGenerate extends ChunkProviderGenerate {
 			flag = this.villageGenerator.generateStructuresInChunk(this.world, this.rand, chunkX, chunkZ);
 			this.strongholdGenerator.generateStructuresInChunk(this.world, this.rand, chunkX, chunkZ);
 			this.scatteredFeatureGenerator.generateStructuresInChunk(this.world, this.rand, chunkX, chunkZ);
+			BPTHandler.MapGen.onChunkPopulateStructures(Dimension.fromWorld(this.world), this.world, this.rand, chunkX, chunkZ);
+			RICMapGenBridge.onChunkPopulateStructures(Dimension.fromWorld(this.world), this.world, this.rand, chunkX, chunkZ);
 		}
 
 		for (int i = 0; i < 4; ++i) {
@@ -369,5 +457,17 @@ public class BChunkProviderGenerate extends ChunkProviderGenerate {
 		SpawnerAnimals.performWorldGenSpawning(this.world, biome, EnumCreatureType.animal, x, z, 16, 16, this.rand);
 		SpawnerAnimals.performWorldGenSpawning(this.world, biome, EnumCreatureType.aquatic, x, z, 16, 16, this.rand);
 		BlockFalling.fallInstantly = false;
+	}
+
+	@Override
+	public void recreateStructures(int chunkX, int chunkZ) {
+		if (this.mapFeaturesEnabled) {
+			this.mineshaftGenerator.generate(this, this.world, chunkX, chunkZ, null);
+			this.villageGenerator.generate(this, this.world, chunkX, chunkZ, null);
+			this.strongholdGenerator.generate(this, this.world, chunkX, chunkZ, null);
+			this.scatteredFeatureGenerator.generate(this, this.world, chunkX, chunkZ, null);
+		}
+		BPTHandler.MapGen.onRecreateStructures(Dimension.fromWorld(this.world), this, this.world, chunkX, chunkZ);
+		RICMapGenBridge.onRecreateStructures(Dimension.fromWorld(this.world), this, this.world, chunkX, chunkZ);
 	}
 }

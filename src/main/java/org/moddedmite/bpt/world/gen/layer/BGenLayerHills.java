@@ -1,9 +1,10 @@
 package org.moddedmite.bpt.world.gen.layer;
 
-import org.moddedmite.bpt.world.biome.BBiomes;
 import net.minecraft.BiomeGenBase;
 import net.minecraft.GenLayer;
 import net.minecraft.IntCache;
+import org.moddedmite.bpt.api.event.BPTHandler;
+import org.moddedmite.bpt.world.biome.BBiomes;
 
 public class BGenLayerHills extends BGenLayer {
     private GenLayer riverLayer;
@@ -69,7 +70,12 @@ public class BGenLayerHills extends BGenLayer {
                     } else if (current == BBiomes.deepOcean.biomeID && this.nextInt(3) == 0) {
                         replacement = this.nextInt(2) == 0 ? BBiomes.plains.biomeID : BBiomes.forest.biomeID;
                     }
-                    
+
+                    int hillsOverride = BPTHandler.BiomeGenerate.onLayerHills(this, current);
+                    if (hillsOverride != current) {
+                        replacement = hillsOverride;
+                    }
+
                     if (flag && replacement != current) {
                         if (BiomeGenBase.biomeList[replacement + 128] != null) {
                             replacement += 128;

@@ -18,7 +18,7 @@ public class ComponentVillageStartPieceMixin {
 	@Shadow public boolean inDesert;
 
 	@Inject(method = "<init>(Lnet/minecraft/WorldChunkManager;ILjava/util/Random;IILjava/util/List;I)V", at = @At("RETURN"))
-	private void bpt_fixDesert(WorldChunkManager worldChunkManager, int i, Random random, int j, int k, List list, int l, CallbackInfo ci) {
+	private void fixDesert(WorldChunkManager worldChunkManager, int i, Random random, int j, int k, List list, int l, CallbackInfo ci) {
 		BiomeGenBase biome = worldChunkManager.getBiomeGenAt(j, k);
 		if (biome == BBiomes.desert || biome == BBiomes.desertHills) {
 			this.inDesert = true;

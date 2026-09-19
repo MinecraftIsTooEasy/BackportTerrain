@@ -209,14 +209,14 @@ public class MapGenCaves extends MapGenBase {
 	}
 	
 	private boolean isTopBlock(Block[] data, int index, int x, int y, int z, int chunkX, int chunkZ) {
-		BBiomes.BBiome biome = (BBiomes.BBiome) world.getBiomeGenForCoords(x + chunkX * 16, z + chunkZ * 16);
-		return (isExceptionBiome(biome) ? data[index] == Block.grass : data[index] == biome.topBlock);
+		BiomeGenBase biome = world.getBiomeGenForCoords(x + chunkX * 16, z + chunkZ * 16);
+		return isExceptionBiome(biome) ? data[index] == Block.grass : data[index] == topBlockOf(biome);
 	}
-	
+
 	protected void digBlock(Block[] data, int index, int x, int y, int z, int chunkX, int chunkZ, boolean foundTop) {
-		BBiomes.BBiome biome = (BBiomes.BBiome) world.getBiomeGenForCoords(x + chunkX * 16, z + chunkZ * 16);
-		Block top = (isExceptionBiome(biome) ? Block.grass : biome.topBlock);
-		Block filler = (isExceptionBiome(biome) ? Block.dirt : biome.fillerBlock);
+		BiomeGenBase biome = world.getBiomeGenForCoords(x + chunkX * 16, z + chunkZ * 16);
+		Block top = isExceptionBiome(biome) ? Block.grass : topBlockOf(biome);
+		Block filler = isExceptionBiome(biome) ? Block.dirt : fillerBlockOf(biome);
 		Block block = data[index];
 		
 		if (block == Block.stone || block == filler || block == top) {

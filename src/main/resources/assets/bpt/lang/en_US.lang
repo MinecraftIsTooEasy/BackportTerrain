@@ -1,0 +1,3 @@
+generator.backport_default=Default(1.7.2+)
+generator.backport_large_biomes=Large Biomes(1.7.2+)
+generator.amplified=Amplified

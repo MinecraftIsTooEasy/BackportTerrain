@@ -1,8 +1,10 @@
 package org.moddedmite.bpt.world.gen;
 
+import net.minecraft.BiomeGenBase;
 import net.minecraft.Block;
 import net.minecraft.IChunkProvider;
 import net.minecraft.World;
+import org.moddedmite.bpt.world.biome.BBiomes;
 
 import java.util.Random;
 
@@ -10,14 +12,14 @@ public class MapGenBase {
 	protected int range = 8;
 	protected Random rand = new Random();
 	protected World world;
-	
+
 	public void generate(IChunkProvider provider, World world, int chunkX, int chunkZ, Block[] blocks) {
 		int k = this.range;
 		this.world = world;
 		this.rand.setSeed(world.getSeed());
 		long l = this.rand.nextLong();
 		long i1 = this.rand.nextLong();
-		
+
 		for (int j1 = chunkX - k; j1 <= chunkX + k; ++j1) {
 			for (int k1 = chunkZ - k; k1 <= chunkZ + k; ++k1) {
 				long l1 = (long) j1 * l;
@@ -27,7 +29,15 @@ public class MapGenBase {
 			}
 		}
 	}
-	
+
 	public void recursiveGenerate(World worldIn, int chunkX, int chunkZ, int originalX, int originalZ, Block[] blocks) {
+	}
+
+	protected static Block topBlockOf(BiomeGenBase biome) {
+		return biome instanceof BBiomes.BBiome bBiome ? bBiome.topBlock : Block.getBlock(biome.topBlock & 255);
+	}
+
+	protected static Block fillerBlockOf(BiomeGenBase biome) {
+		return biome instanceof BBiomes.BBiome bBiome ? bBiome.fillerBlock : Block.getBlock(biome.fillerBlock & 255);
 	}
 }

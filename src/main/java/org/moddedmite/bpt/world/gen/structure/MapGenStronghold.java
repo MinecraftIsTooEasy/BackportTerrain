@@ -7,9 +7,9 @@ import net.minecraft.ChunkPosition;
 import net.minecraft.StructureStart;
 import net.minecraft.StructureStrongholdStart;
 import net.minecraft.BiomeGenBase;
+import org.moddedmite.bpt.api.event.BPTHandler;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -38,6 +38,7 @@ public class MapGenStronghold extends MapGenStructure {
 			    this.field_151546_e.add(biomegenbase);
 		    }
 	    }
+        BPTHandler.BiomeGenerate.onStrongholdAllowedRegister(this.field_151546_e);
     }
 
     public MapGenStronghold(Map p_i2068_1_) {

@@ -1,10 +1,15 @@
 package org.moddedmite.bpt.world.gen.layer;
 
-import org.moddedmite.bpt.world.biome.BBiomes;
 import net.minecraft.BiomeGenBase;
 import net.minecraft.GenLayer;
 import net.minecraft.IntCache;
 import net.minecraft.WorldType;
+import org.moddedmite.bpt.api.event.BPTHandler;
+import org.moddedmite.bpt.world.biome.BBiomes;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class BGenLayerBiome extends BGenLayer {
     private BiomeGenBase[] hotBiomes;
@@ -23,6 +28,16 @@ public class BGenLayerBiome extends BGenLayer {
         if (worldType == WorldType.DEFAULT_1_1) {
             this.hotBiomes = new BiomeGenBase[]{BBiomes.desert, BBiomes.forest, BBiomes.extremeHills, BBiomes.swampland, BBiomes.plains, BBiomes.taiga};
         }
+
+        List<BiomeGenBase> hot = new ArrayList<>(Arrays.asList(this.hotBiomes));
+        List<BiomeGenBase> warm = new ArrayList<>(Arrays.asList(this.warmBiomes));
+        List<BiomeGenBase> cool = new ArrayList<>(Arrays.asList(this.coolBiomes));
+        List<BiomeGenBase> icy = new ArrayList<>(Arrays.asList(this.icyBiomes));
+        BPTHandler.BiomeGenerate.onInitialBiomesModify(hot, warm, cool, icy);
+        this.hotBiomes = hot.toArray(new BiomeGenBase[0]);
+        this.warmBiomes = warm.toArray(new BiomeGenBase[0]);
+        this.coolBiomes = cool.toArray(new BiomeGenBase[0]);
+        this.icyBiomes = icy.toArray(new BiomeGenBase[0]);
     }
     
     public int[] getInts(int areaX, int areaY, int areaWidth, int areaHeight, int z) {

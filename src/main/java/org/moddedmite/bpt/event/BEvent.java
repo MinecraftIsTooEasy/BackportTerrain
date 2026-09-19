@@ -7,7 +7,7 @@ import org.moddedmite.bpt.world.biome.BBiomes;
 
 import java.util.ArrayList;
 
-public class ExampleEvent extends Handlers {
+public class BEvent extends Handlers {
 
     public static void register() {
         ArrayList biomes = Lists.newArrayList(MapGenVillage.villageSpawnBiomes);

@@ -3,8 +3,10 @@ package org.moddedmite.bpt.world.gen.structure;
 import net.minecraft.MathHelper;
 import net.minecraft.StructureStart;
 import net.minecraft.StructureVillageStart;
+import org.moddedmite.bpt.api.event.BPTHandler;
 import org.moddedmite.bpt.world.biome.BBiomes;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -15,7 +17,12 @@ public class MapGenVillage extends MapGenStructure {
     /**
      * A list of all the biomes villages can spawn in.
      */
-    public static List villageSpawnBiomes = Arrays.asList(BBiomes.plains, BBiomes.desert, BBiomes.savanna);
+    public static List villageSpawnBiomes = new ArrayList<>(Arrays.asList(BBiomes.plains, BBiomes.desert, BBiomes.savanna));
+
+    static {
+        BPTHandler.BiomeGenerate.onVillageAllowedRegister(villageSpawnBiomes);
+    }
+
     /**
      * World terrain type, 0 for normal, 1 for flat map
      */

@@ -15,11 +15,6 @@ import java.util.Random;
 
 @Mixin(BiomeGenBase.class)
 public class BiomeGenBaseMixin {
-	@Shadow
-	public byte topBlock;
-	
-	@Shadow
-	public byte fillerBlock;
 	
 	@Inject(method = "isJungleBiome", at = @At("HEAD"), cancellable = true)
 	private void addJungleBiome(CallbackInfoReturnable<Boolean> cir) {

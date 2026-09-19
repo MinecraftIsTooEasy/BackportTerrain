@@ -38,6 +38,25 @@ configurations {
     fml
 }
 
+// RIC version skew fix.
+//
+// RIC 1.5.8 (the build the run/mods modpack ships, and the one Shop 1.0.5 compiles
+// against) adds IKeybindingListener and KeybindingRegisterEvent.register(KeyBinding).
+// The published maven artifact only goes up to 1.5.7, and 1.5.5 -- the version declared
+// below -- is upgraded to 1.5.7 anyway by BetterGameSetting/ExtraGui/OhMyCommands.
+//
+// That leaves the dev runtime with two RIC copies: the mod jar (1.5.8) and the maven jar
+// (1.5.7). IKeybindingListener then loads from 1.5.8 while KeybindingRegisterEvent loads
+// from 1.5.7 through parent-first delegation, and publishing the keybinding event throws
+// NoSuchMethodError: KeybindingRegisterEvent.register(net.minecraft.KeyBinding).
+//
+// Drop the maven module everywhere and put the same 1.5.8 jar the modpack uses on the
+// classpath instead, so dev and runtime agree. libs/ is a local-only binary; refresh it
+// whenever the modpack's RIC jar is updated.
+configurations.configureEach {
+    exclude group: "com.github.MinecraftIsTooEasy", module: "RustedIronCore"
+}
+
 dependencies {
     // Dependency versions are maintained in gradle.properties or alongside project-specific declarations below.
     // Use implementation for required mods, compileOnly for optional integrations,
@@ -51,8 +70,9 @@ dependencies {
     fml "com.github.MinecraftIsTooEasy:FishModLoader:3.4.2"
     implementation "com.github.MinecraftIsTooEasy:FishModLoader:3.4.2"
 
-    // The most basic dependency library mod, with a status similar to Fabric API
-    implementation "com.github.MinecraftIsTooEasy:RustedIronCore:1.5.5"
+    // The most basic dependency library mod, with a status similar to Fabric API.
+    // Sourced from libs/ rather than maven; see the RIC version skew note above.
+    implementation files("libs/rustedironcore-1.5.8.jar")
     implementation "org.moddedmite:BetterGameSetting:1.5.0-build.2026090500"
     localRuntime "com.github.MinecraftIsTooEasy:ManyLib:2.3.1"
     localRuntime "com.github.MinecraftIsTooEasy:ExtraGui:1.3.7"
@@ -88,6 +108,38 @@ loom {
 //        server {
 //            programArgs "--", ""
 //        }
+    }
+}
+
+// Dev-run log4j fix.
+//
+// loom regenerates .gradle/loom-cache/log4j.xml on every run from its bundled
+// log4j2.fabric.xml template. None of that template's patterns contain a throwable
+// token, so log4j2 auto-appends %xEx (ExtendedThrowablePatternConverter), which resolves
+// every stack-trace frame class through log4j's own class loader. In a dev run the remapped
+// Minecraft jar sits on the system class path while KnotClassLoader has already defined the
+// same classes, so logging any exception whose stack contains a net.minecraft.* frame throws
+// "LinkageError: loader constraint violation" inside the appender. Every appender then fails
+// and the real exception never reaches the log (empty output-client.log, no crash report).
+//
+// Appending an explicit %throwable selects the plain ThrowablePatternConverter, which only
+// calls Throwable.printStackTrace and loads no classes. Stack traces still print in full.
+tasks.matching { it.name == "generateLog4jConfig" }.configureEach {
+    doLast {
+        def configFile = file(".gradle/loom-cache/log4j.xml")
+        if (!configFile.exists() || configFile.text.contains("%throwable")) {
+            return
+        }
+        def original = configFile.text
+        def patched = original
+                .replace("%msg{nolookups}%n", "%msg{nolookups}%throwable%n")
+                .replace("%msg%n", "%msg%throwable%n")
+        if (patched == original) {
+            logger.warn("[bpt] no '%msg%n' token in ${configFile}; dev log4j config left unpatched")
+            return
+        }
+        configFile.text = patched
+        logger.lifecycle("[bpt] patched dev log4j config to use the plain %throwable converter")
     }
 }
 
